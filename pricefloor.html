@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>經濟科互動教學：價格下限與最低工資</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.2; }
+        }
+        .blinking-area {
+            animation: blink 1.5s infinite;
+        }
+        .info-card {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-900 mb-2">價格下限 (Price Floor) 互動模擬器</h1>
+            <p class="text-slate-600 text-lg">主題：香港勞工市場與最低工資案例分析</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Panel: Controls & Status -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
+                        政策設定
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 italic">市場均衡工資 (Pe): HK$50</label>
+                        <label for="priceSlider" class="block text-lg font-bold text-indigo-900 mb-2">
+                            法定最低工資 (Pf): HK$ <span id="priceVal">40</span>
+                        </label>
+                        <input type="range" id="priceSlider" min="10" max="90" value="40" step="1" 
+                               class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    </div>
+
+                    <div id="statusBadge" class="py-3 px-4 rounded-xl text-center font-bold text-lg mb-4">
+                        無效價格下限
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">2</span>
+                        市場數據 (Q)
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-slate-600">需求量 (Qd):</span>
+                            <span id="qdVal" class="font-mono font-bold text-blue-600 text-xl">100</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-slate-600">供應量 (Qs):</span>
+                            <span id="qsVal" class="font-mono font-bold text-orange-600 text-xl">100</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span id="gapLabel" class="text-slate-600">市場狀態:</span>
+                            <span id="gapVal" class="font-mono font-bold text-red-600 text-xl">平衡</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">💡 DSE 答題重點</h3>
+                    <ul class="text-sm space-y-2 text-indigo-100">
+                        <li>• 只有當 Pf > Pe 時，才稱為「有效」。</li>
+                        <li>• 有效價格下限會導致 $Q_s > Q_d$。</li>
+                        <li>• 在勞工市場，這段差距稱為「失業」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Graph -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-slate-200 relative h-[500px]">
+                    <canvas id="marketChart"></canvas>
+                    <div id="surplusOverlay" class="absolute pointer-events-none hidden" style="background-color: rgba(239, 68, 68, 0.2); border: 2px dashed #ef4444;">
+                        <div class="w-full h-full flex items-center justify-center text-red-600 font-bold text-sm md:text-base blinking-area">
+                            過剩 / 失業 (Surplus)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Box -->
+                <div id="contextBox" class="bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-2">現實生活連繫：</h3>
+                    <p id="contextText" class="text-slate-600 italic">當工資設為 $40，由於低於市場均衡價 $50，僱主仍會以 $50 招聘。法定最低工資不具約束力。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-slate-400 text-sm">
+            © 2025 S4 經濟科教學工具 | 專為 Band 1 學生邏輯分析設計
+        </footer>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        const slider = document.getElementById('priceSlider');
+        const priceDisplay = document.getElementById('priceVal');
+        const qdDisplay = document.getElementById('qdVal');
+        const qsDisplay = document.getElementById('qsVal');
+        const gapValDisplay = document.getElementById('gapVal');
+        const gapLabelDisplay = document.getElementById('gapLabel');
+        const statusBadge = document.getElementById('statusBadge');
+        const contextText = document.getElementById('contextText');
+        const contextBox = document.getElementById('contextBox');
+        const surplusOverlay = document.getElementById('surplusOverlay');
+
+        // Initial Data
+        const Pe = 50;
+        const Qe = 100;
+
+        // Demand Curve: P = 150 - Q  => Q = 150 - P
+        // Supply Curve: P = Q - 50   => Q = P + 50
+        
+        let marketChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: '需求曲線 (D)',
+                        data: [{x: 50, y: 100}, {x: 150, y: 0}], // Simplified
+                        borderColor: '#2563eb',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: '供應曲線 (S)',
+                        data: [{x: 50, y: 0}, {x: 150, y: 100}], // Simplified
+                        borderColor: '#f97316',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: '價格下限 (Pf)',
+                        data: [{x: 0, y: 40}, {x: 200, y: 40}],
+                        borderColor: '#4f46e5',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: { display: true, text: '數量 (勞工單位)' },
+                        min: 0, max: 200
+                    },
+                    y: {
+                        title: { display: true, text: '價格 (HK$)' },
+                        min: 0, max: 120
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        function updateChart() {
+            const Pf = parseInt(slider.value);
+            priceDisplay.innerText = Pf;
+
+            // Calculate Qd and Qs based on Pf
+            // Formula D: Q = 150 - P
+            // Formula S: Q = P + 50
+            const Qd = Math.max(0, 150 - Pf);
+            const Qs = Math.max(0, Pf + 50);
+
+            // Update Price Floor Line
+            marketChart.data.datasets[2].data = [{x: 0, y: Pf}, {x: 200, y: Pf}];
+
+            if (Pf > Pe) {
+                // Effective
+                statusBadge.innerText = "有效價格下限 (Effective)";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-red-100 text-red-700 border border-red-200";
+                qdDisplay.innerText = Qd;
+                qsDisplay.innerText = Qs;
+                gapLabelDisplay.innerText = "失業人數:";
+                gapValDisplay.innerText = Qs - Qd;
+                contextText.innerText = `⚠️ 現實案例：由於法定工資 $${Pf} 高於均衡水平 $50，僱主因成本增加減少聘請至 ${Qd} 人，但更多人 ($${Qs}) 願意工作，導致市場出現過剩，即「失業」。`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-red-500 shadow-sm";
+                
+                // Overlay Logic (simplified positioning)
+                const chartArea = marketChart.chartArea;
+                if(chartArea) {
+                    const xQd = marketChart.scales.x.getPixelForValue(Qd);
+                    const xQs = marketChart.scales.x.getPixelForValue(Qs);
+                    const yPf = marketChart.scales.y.getPixelForValue(Pf);
+                    
+                    surplusOverlay.style.display = 'block';
+                    surplusOverlay.style.left = xQd + 'px';
+                    surplusOverlay.style.top = (yPf - 20) + 'px';
+                    surplusOverlay.style.width = (xQs - xQd) + 'px';
+                    surplusOverlay.style.height = '40px';
+                }
+            } else {
+                // Ineffective
+                statusBadge.innerText = "無效價格下限 (Ineffective)";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-slate-100 text-slate-500 border border-slate-200";
+                qdDisplay.innerText = Qe;
+                qsDisplay.innerText = Qe;
+                gapLabelDisplay.innerText = "市場狀態:";
+                gapValDisplay.innerText = "平衡 (交易於 $50)";
+                contextText.innerText = `✅ 現實案例：雖然政府規定工資不得低於 $${Pf}，但市場已願意支付 $50。工資會維持在 $50，對就業量沒有實質影響。`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm";
+                surplusOverlay.style.display = 'none';
+            }
+
+            marketChart.update();
+        }
+
+        slider.addEventListener('input', updateChart);
+        window.onload = () => {
+            // Define actual curve points for a more realistic look
+            marketChart.data.datasets[0].data = [];
+            marketChart.data.datasets[1].data = [];
+            for(let p=0; p<=150; p+=10) {
+                marketChart.data.datasets[0].data.push({y: p, x: 150-p});
+                marketChart.data.datasets[1].data.push({y: p, x: p+50});
+            }
+            updateChart();
+        };
+    </script>
+</body>
+</html>
