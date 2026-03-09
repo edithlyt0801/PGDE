@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>經濟科互動教學：價格下限與最低工資</title><!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>經濟科互動教學：價格下限與最低工資</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -78,7 +83,7 @@
                     <h3 class="text-lg font-bold mb-2">💡 DSE 答題重點</h3>
                     <ul class="text-sm space-y-2 text-indigo-100">
                         <li>• 只有當 Pf > Pe 時，才稱為「有效」。</li>
-                        <li>• 有效價格下限會導致 $Q_s > Q_d$。</li>
+                        <li>• 有效價格下限會導致 Qs > Qd。</li>
                         <li>• 在勞工市場，這段差距稱為「失業」。</li>
                     </ul>
                 </div>
@@ -198,7 +203,7 @@
                 qsDisplay.innerText = Qs;
                 gapLabelDisplay.innerText = "失業人數:";
                 gapValDisplay.innerText = Qs - Qd;
-                contextText.innerText = `⚠️ 現實案例：由於法定工資 $${Pf} 高於均衡水平 $50，僱主因成本增加減少聘請至 ${Qd} 人，但更多人 ($${Qs}) 願意工作，導致市場出現過剩，即「失業」。`;
+                contextText.innerText = `⚠️ 現實案例：由於法定工資 $${Pf} 高於均衡水平 $50，僱主因成本增加減少聘請至 ${Qd} 人，但更多人 (${Qs}) 願意工作，導致市場出現過剩，即「失業」。`;
                 contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-red-500 shadow-sm";
                 
                 // Overlay Logic (simplified positioning)
@@ -243,4 +248,5 @@
         };
     </script>
 </body>
+</html>
 </html>
