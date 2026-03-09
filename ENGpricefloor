@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economics Interactive Learning: Price Floor & Minimum Wage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.2; }
+        }
+        .blinking-area {
+            animation: blink 1.5s infinite;
+        }
+        .info-card {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-900 mb-2">Price Floor Interactive Simulator</h1>
+            <p class="text-slate-600 text-lg">Topic: Hong Kong Labor Market & Minimum Wage Case Study</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Panel: Controls & Status -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
+                        Policy Settings
+                    </h2>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 italic">Market Equilibrium Wage (Pe): HK$50</label>
+                        <label for="priceSlider" class="block text-lg font-bold text-indigo-900 mb-2">
+                            Statutory Minimum Wage (Pf): HK$ <span id="priceVal">40</span>
+                        </label>
+                        <input type="range" id="priceSlider" min="10" max="90" value="40" step="1" 
+                               class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    </div>
+
+                    <div id="statusBadge" class="py-3 px-4 rounded-xl text-center font-bold text-lg mb-4">
+                        Ineffective Price Floor
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">2</span>
+                        Market Data (Q)
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-slate-600">Quantity Demanded (Qd):</span>
+                            <span id="qdVal" class="font-mono font-bold text-blue-600 text-xl">100</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-slate-600">Quantity Supplied (Qs):</span>
+                            <span id="qsVal" class="font-mono font-bold text-orange-600 text-xl">100</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span id="gapLabel" class="text-slate-600">Market Status:</span>
+                            <span id="gapVal" class="font-mono font-bold text-red-600 text-xl">Equilibrium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">💡 DSE Exam Tips</h3>
+                    <ul class="text-sm space-y-2 text-indigo-100">
+                        <li>• A price floor is only "effective" when Pf > Pe.</li>
+                        <li>• An effective price floor leads to Qs > Qd.</li>
+                        <li>• In the labor market, this gap is called "unemployment".</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Graph -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-slate-200 relative h-[500px]">
+                    <canvas id="marketChart"></canvas>
+                    <div id="surplusOverlay" class="absolute pointer-events-none hidden" style="background-color: rgba(239, 68, 68, 0.2); border: 2px dashed #ef4444;">
+                        <div class="w-full h-full flex items-center justify-center text-red-600 font-bold text-sm md:text-base blinking-area">
+                            Surplus / Unemployment
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Box -->
+                <div id="contextBox" class="bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm">
+                    <h3 class="font-bold text-slate-800 mb-2">Real-World Connection:</h3>
+                    <p id="contextText" class="text-slate-600 italic">When the wage is set at $40, which is below the market equilibrium of $50, employers will still hire at $50. The statutory minimum wage is not binding.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-slate-400 text-sm">
+            © 2025 S4 Economics Teaching Tool | Designed for Logic-based Analysis
+        </footer>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        const slider = document.getElementById('priceSlider');
+        const priceDisplay = document.getElementById('priceVal');
+        const qdDisplay = document.getElementById('qdVal');
+        const qsDisplay = document.getElementById('qsVal');
+        const gapValDisplay = document.getElementById('gapVal');
+        const gapLabelDisplay = document.getElementById('gapLabel');
+        const statusBadge = document.getElementById('statusBadge');
+        const contextText = document.getElementById('contextText');
+        const contextBox = document.getElementById('contextBox');
+        const surplusOverlay = document.getElementById('surplusOverlay');
+
+        // Initial Data
+        const Pe = 50;
+        const Qe = 100;
+
+        // Demand Curve: P = 150 - Q  => Q = 150 - P
+        // Supply Curve: P = Q - 50   => Q = P + 50
+        
+        let marketChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Demand Curve (D)',
+                        data: [{x: 50, y: 100}, {x: 150, y: 0}], // Simplified
+                        borderColor: '#2563eb',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Supply Curve (S)',
+                        data: [{x: 50, y: 0}, {x: 150, y: 100}], // Simplified
+                        borderColor: '#f97316',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Price Floor (Pf)',
+                        data: [{x: 0, y: 40}, {x: 200, y: 40}],
+                        borderColor: '#4f46e5',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: { display: true, text: 'Quantity (Labor Units)' },
+                        min: 0, max: 200
+                    },
+                    y: {
+                        title: { display: true, text: 'Price (HK$)' },
+                        min: 0, max: 120
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        function updateChart() {
+            const Pf = parseInt(slider.value);
+            priceDisplay.innerText = Pf;
+
+            // Calculate Qd and Qs based on Pf
+            // Formula D: Q = 150 - P
+            // Formula S: Q = P + 50
+            const Qd = Math.max(0, 150 - Pf);
+            const Qs = Math.max(0, Pf + 50);
+
+            // Update Price Floor Line
+            marketChart.data.datasets[2].data = [{x: 0, y: Pf}, {x: 200, y: Pf}];
+
+            if (Pf > Pe) {
+                // Effective
+                statusBadge.innerText = "Effective Price Floor";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-red-100 text-red-700 border border-red-200";
+                qdDisplay.innerText = Qd;
+                qsDisplay.innerText = Qs;
+                gapLabelDisplay.innerText = "Unemployed:";
+                gapValDisplay.innerText = Qs - Qd;
+                contextText.innerText = `⚠️ Real-world Case: Since the statutory wage $${Pf} is higher than the equilibrium $50, employers reduce hiring to ${Qd} people due to increased costs. However, more people (${Qs}) are willing to work, leading to a market surplus, i.e., "unemployment".`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-red-500 shadow-sm";
+                
+                // Overlay Logic (simplified positioning)
+                const chartArea = marketChart.chartArea;
+                if(chartArea) {
+                    const xQd = marketChart.scales.x.getPixelForValue(Qd);
+                    const xQs = marketChart.scales.x.getPixelForValue(Qs);
+                    const yPf = marketChart.scales.y.getPixelForValue(Pf);
+                    
+                    surplusOverlay.style.display = 'block';
+                    surplusOverlay.style.left = xQd + 'px';
+                    surplusOverlay.style.top = (yPf - 20) + 'px';
+                    surplusOverlay.style.width = (xQs - xQd) + 'px';
+                    surplusOverlay.style.height = '40px';
+                }
+            } else {
+                // Ineffective
+                statusBadge.innerText = "Ineffective Price Floor";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-slate-100 text-slate-500 border border-slate-200";
+                qdDisplay.innerText = Qe;
+                qsDisplay.innerText = Qe;
+                gapLabelDisplay.innerText = "Market Status:";
+                gapValDisplay.innerText = "Equilibrium (Traded at $50)";
+                contextText.innerText = `✅ Real-world Case: Although the government mandates a wage no lower than $${Pf}, the market is already willing to pay $50. Wages will remain at $50, having no real impact on employment.`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm";
+                surplusOverlay.style.display = 'none';
+            }
+
+            marketChart.update();
+        }
+
+        slider.addEventListener('input', updateChart);
+        window.onload = () => {
+            // Define actual curve points for a more realistic look
+            marketChart.data.datasets[0].data = [];
+            marketChart.data.datasets[1].data = [];
+            for(let p=0; p<=150; p+=10) {
+                marketChart.data.datasets[0].data.push({y: p, x: 150-p});
+                marketChart.data.datasets[1].data.push({y: p, x: p+50});
+            }
+            updateChart();
+        };
+    </script>
+</body>
+</html>
