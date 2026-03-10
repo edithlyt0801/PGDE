@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EconLab: Price Floor & Minimum Wage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        /* 用於平滑淡入分頁內容 */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Flashcard 3D flip effects */
+        .perspective { perspective: 1000px; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+
+    <!-- Sticky Navigation Header -->
+    <nav class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Title -->
+                <button onclick="switchTab('prelesson')" class="flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+                    <span class="text-xl font-bold text-indigo-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        EconLab
+                    </span>
+                </button>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-6 md:space-x-8">
+                    <!-- Pre-lesson Tab Button -->
+                    <button id="navPrelesson" onclick="switchTab('prelesson')" class="text-indigo-600 font-bold border-b-2 border-indigo-600 py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Pre-lesson
+                    </button>
+
+                    <!-- Flashcards Tab Button -->
+                    <button id="navFlashcards" onclick="switchTab('flashcards')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        Flashcards
+                    </button>
+
+                    <!-- Vocab Match Tab Button -->
+                    <button id="navVocab" onclick="switchTab('vocab')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Vocab Match
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主內容容器 -->
+    <main class="min-h-screen">
+        <!-- ========================================== -->
+        <!-- TAB 1: PRE-LESSON TASK                     -->
+        <!-- ========================================== -->
+        <div id="prelesson" class="tab-content max-w-4xl mx-auto p-4 md:p-8 pt-8 fade-in block">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Pre-lesson Task: Understanding Price Floors</h1>
+                <p class="text-slate-600 text-lg">Watch the following video to explore the strengths, weaknesses, and alternatives to Price Floors before entering the Vocab match.</p>
+            </header>
+
+            <!-- Video Embed Section -->
+            <div class="bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-slate-200 mb-8">
+                <div class="relative w-full overflow-hidden rounded-xl bg-slate-900 border border-slate-800" style="padding-top: 56.25%;">
+                    <a href="https://www.youtube.com/watch?v=2UDFXf5kZ08" target="_blank" rel="noopener noreferrer" class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-white p-6 text-center hover:bg-slate-800 transition-colors group">
+                        <svg class="w-20 h-20 text-red-600 mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold mb-2">Watch Case Study Video on YouTube</h3>
+                        <p class="text-slate-300 text-sm md:text-base">The video owner has disabled third-party embedding.<br>Click here to open the video safely in a new tab.</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Self-Directed Learning Prompts -->
+            <div class="bg-indigo-50 p-6 md:p-8 rounded-3xl border border-indigo-100 shadow-sm">
+                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">
+                    <span class="text-2xl mr-2">🧠</span> Critical Thinking Prompts
+                </h2>
+                <p class="text-slate-700 mb-4 italic">As you watch the video, think about the following questions based on the concepts discussed. We will debate these in class:</p>
+                
+                <ul class="space-y-4 text-slate-700">
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">1</div>
+                        <div><strong>Weighing Pros and Cons:</strong> The video highlights that price floors provide financial security for producers, but can also lead to wasteful surpluses and inefficiency. In your opinion, do the protections for workers/producers justify the higher prices and potential waste for consumers?</div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">2</div>
+                        <div><strong>Unintended Market Outcomes:</strong> When a price floor is set too high (like an excessive minimum wage), businesses might not be able to afford as many workers. How does this consequence specifically impact the people the policy was originally trying to help?</div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">3</div>
+                        <div><strong>Evaluating Alternatives:</strong> The video suggests direct government subsidies and tax incentives as alternatives to a price floor. How do these alternatives achieve the goal of supporting producers and workers without artificially throwing the market equilibrium out of balance?</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="mt-10 flex justify-center">
+                <button onclick="switchTab('flashcards')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                    Proceed to Flashcards
+                    <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1.5: FLASHCARDS                        -->
+        <!-- ========================================== -->
+        <div id="flashcards" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Concept Flashcards</h1>
+                <p class="text-slate-600 text-lg">Click on a card to flip it over and review the key concepts from the video.</p>
+            </header>
+
+            <div class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-200">
+                <!-- Flashcard Grid injected via JS -->
+                <div id="flashcardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                </div>
+
+                <!-- Call to Action -->
+                <div class="mt-8 pt-8 border-t border-slate-100 flex justify-center">
+                    <button onclick="switchTab('vocab')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                        Proceed to Vocab Match
+                        <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: VOCAB MATCH                         -->
+        <!-- ========================================== -->
+        <div id="vocab" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Vocabulary Match Practice</h1>
+                <p class="text-slate-600 text-lg">Select a term on the left, then select its correct definition on the right.</p>
+            </header>
+
+            <div class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-lg font-bold text-slate-700">Matches Found: <span id="matchCount" class="text-indigo-600">0</span> / 6</div>
+                    <button onclick="resetVocabGame()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors text-sm">Reset Game</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="vocabGameArea">
+                    <!-- Terms Column -->
+                    <div class="space-y-3" id="termsContainer">
+                        <!-- Terms injected via JS -->
+                    </div>
+                    
+                    <!-- Definitions Column -->
+                    <div class="space-y-3" id="defsContainer">
+                        <!-- Definitions injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div id="vocabSuccess" class="hidden mt-8 p-6 bg-green-50 border border-green-200 rounded-2xl text-center fade-in">
+                    <h3 class="text-2xl font-bold text-green-700 mb-2">🎉 Excellent Job!</h3>
+                    <p class="text-green-600 mb-6">You've successfully mastered the key terms for Price Floors.</p>
+                    <button onclick="switchTab('prelesson')" class="inline-flex items-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full transition duration-300 shadow-sm focus:ring-4 focus:ring-green-300">
+                        Back to Start
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="mt-8 text-center text-slate-400 text-sm pb-8">
+        © 2025 S4 Economics Teaching Tool | Designed for Logic-based Analysis
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- 標籤頁 (Tabs) 切換邏輯 ---
+        function switchTab(tabId) {
+            // 定義樣式
+            const activeNavClass = "text-indigo-600 font-bold border-b-2 border-indigo-600 py-5 flex items-center transition-colors";
+            const inactiveNavClass = "text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors";
+
+            // 取得 DOM 元素
+            const prelessonTab = document.getElementById('prelesson');
+            const flashcardsTab = document.getElementById('flashcards');
+            const vocabTab = document.getElementById('vocab');
+
+            const navPrelesson = document.getElementById('navPrelesson');
+            const navFlashcards = document.getElementById('navFlashcards');
+            const navVocab = document.getElementById('navVocab');
+
+            // 隱藏所有分頁
+            prelessonTab.classList.add('hidden');
+            prelessonTab.classList.remove('block');
+            if (flashcardsTab) {
+                flashcardsTab.classList.add('hidden');
+                flashcardsTab.classList.remove('block');
+            }
+            vocabTab.classList.add('hidden');
+            vocabTab.classList.remove('block');
+
+            // 重置導覽列樣式
+            navPrelesson.className = inactiveNavClass;
+            if (navFlashcards) navFlashcards.className = inactiveNavClass;
+            navVocab.className = inactiveNavClass;
+
+            // 顯示目標分頁並套用樣式
+            if (tabId === 'prelesson') {
+                prelessonTab.classList.remove('hidden');
+                prelessonTab.classList.add('block');
+                navPrelesson.className = activeNavClass;
+            } else if (tabId === 'flashcards' && flashcardsTab) {
+                flashcardsTab.classList.remove('hidden');
+                flashcardsTab.classList.add('block');
+                navFlashcards.className = activeNavClass;
+            } else if (tabId === 'vocab') {
+                vocabTab.classList.remove('hidden');
+                vocabTab.classList.add('block');
+                navVocab.className = activeNavClass;
+            }
+            
+            // 切換分頁後自動捲動回頁面最頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = () => {
+            // 確保一開始顯示 prelesson 分頁
+            switchTab('prelesson');
+            
+            // 初始化功能
+            initFlashcards();
+            initVocabGame();
+        };
+
+        // --- Flashcards Logic ---
+        const flashcardData = [
+            { title: "Price Floor", content: "A government-imposed minimum price set above equilibrium to help producers receive a fair income." },
+            { title: "Common Examples", content: "Minimum wage (labor), agricultural price supports (crops), and minimum prices for goods like milk." },
+            { title: "Key Strengths", content: "Provides financial security, prevents extremely low prices (poor working conditions), and maintains long-term supply." },
+            { title: "Major Weaknesses", content: "Can create market surpluses (excess stock), lead to production inefficiency, and make goods more expensive for consumers." },
+            { title: "Minimum Wage Effects", content: "Ensures workers can support themselves, but may lead to fewer jobs if businesses cannot afford the higher labor cost." },
+            { title: "Policy Alternatives", content: "Direct government subsidies, tax incentives to lower business costs, and education/skill development programs." }
+        ];
+
+        function initFlashcards() {
+            const container = document.getElementById('flashcardContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            flashcardData.forEach((card, index) => {
+                container.innerHTML += `
+                    <div class="h-64 w-full perspective cursor-pointer flip-card group" onclick="this.classList.toggle('flipped')">
+                        <div class="relative w-full h-full flip-card-inner rounded-2xl">
+                            <!-- Front -->
+                            <div class="absolute w-full h-full backface-hidden bg-indigo-50 border-2 border-indigo-100 rounded-2xl flex flex-col items-center justify-center p-6 text-center group-hover:border-indigo-400 group-hover:shadow-md transition-all">
+                                <span class="text-indigo-400 text-sm font-bold tracking-widest uppercase mb-3 bg-white px-3 py-1 rounded-full shadow-sm">Card ${index + 1}</span>
+                                <h3 class="text-2xl font-bold text-indigo-900">${card.title}</h3>
+                                <p class="text-indigo-500/70 mt-6 text-sm font-semibold flex items-center">
+                                    <svg class="w-4 h-4 mr-1 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                                    Tap to flip
+                                </p>
+                            </div>
+                            <!-- Back -->
+                            <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-indigo-700 text-white rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-lg border-2 border-indigo-800">
+                                <p class="text-lg font-medium leading-relaxed">${card.content}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- Vocabulary Match Game Logic ---
+        const vocabData = [
+            { id: 1, term: "Price Floor", def: "The lower limit imposed by the government on the price that sellers can charge." },
+            { id: 2, term: "Effective Price Floor", def: "A price limit set above the equilibrium price, leading to a market surplus." },
+            { id: 3, term: "Ineffective Price Floor", def: "A price limit set below the equilibrium price, having no impact on the actual transaction price." },
+            { id: 4, term: "Unemployment", def: "A surplus of labor caused when the minimum wage is higher than the equilibrium wage." },
+            { id: 5, term: "Black Market", def: "An illegal market where transactions occur at a price usually lower than the government-mandated minimum." },
+            { id: 6, term: "Non-price Competition", def: "Sellers offering non-monetary benefits (e.g., free gifts) to clear excess supply." }
+        ];
+
+        let selectedTermId = null;
+        let selectedDefId = null;
+        let matchedPairs = [];
+
+        function initVocabGame() {
+            const termsContainer = document.getElementById('termsContainer');
+            const defsContainer = document.getElementById('defsContainer');
+            
+            termsContainer.innerHTML = '';
+            defsContainer.innerHTML = '';
+            
+            // Shuffle definitions
+            const shuffledDefs = [...vocabData].sort(() => Math.random() - 0.5);
+
+            // Render Terms
+            vocabData.forEach(item => {
+                const termEl = document.createElement('button');
+                termEl.className = `w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-lg focus:outline-none term-btn`;
+                termEl.dataset.id = item.id;
+                termEl.innerText = item.term;
+                termEl.onclick = () => handleTermSelect(item.id);
+                termsContainer.appendChild(termEl);
+            });
+
+            // Render Definitions
+            shuffledDefs.forEach(item => {
+                const defEl = document.createElement('button');
+                defEl.className = `w-full text-left p-4 rounded-xl border-2 transition-all text-slate-700 focus:outline-none def-btn`;
+                defEl.dataset.id = item.id;
+                defEl.innerText = item.def;
+                defEl.onclick = () => handleDefSelect(item.id);
+                defsContainer.appendChild(defEl);
+            });
+
+            updateVocabUI();
+        }
+
+        function handleTermSelect(id) {
+            if (matchedPairs.includes(id)) return;
+            selectedTermId = selectedTermId === id ? null : id; // Toggle
+            updateVocabUI();
+            checkMatch();
+        }
+
+        function handleDefSelect(id) {
+            if (matchedPairs.includes(id)) return;
+            selectedDefId = selectedDefId === id ? null : id; // Toggle
+            updateVocabUI();
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (selectedTermId !== null && selectedDefId !== null) {
+                if (selectedTermId === selectedDefId) {
+                    // Match Correct
+                    matchedPairs.push(selectedTermId);
+                    document.getElementById('matchCount').innerText = matchedPairs.length;
+                    selectedTermId = null;
+                    selectedDefId = null;
+                    updateVocabUI();
+                    
+                    if (matchedPairs.length === vocabData.length) {
+                        document.getElementById('vocabSuccess').classList.remove('hidden');
+                        document.getElementById('vocabSuccess').classList.add('block');
+                    }
+                } else {
+                    // Match Incorrect
+                    const currentTermBtn = document.querySelector(`.term-btn[data-id="${selectedTermId}"]`);
+                    const currentDefBtn = document.querySelector(`.def-btn[data-id="${selectedDefId}"]`);
+                    
+                    currentTermBtn.classList.replace('border-indigo-500', 'border-red-500');
+                    currentTermBtn.classList.replace('bg-indigo-50', 'bg-red-50');
+                    currentDefBtn.classList.replace('border-indigo-500', 'border-red-500');
+                    currentDefBtn.classList.replace('bg-indigo-50', 'bg-red-50');
+
+                    setTimeout(() => {
+                        selectedTermId = null;
+                        selectedDefId = null;
+                        updateVocabUI();
+                    }, 600);
+                }
+            }
+        }
+
+        function updateVocabUI() {
+            document.querySelectorAll('.term-btn').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                btn.className = 'w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-lg focus:outline-none term-btn ';
+                
+                if (matchedPairs.includes(id)) {
+                    btn.className += 'bg-green-100 border-green-500 text-green-700 cursor-default opacity-50';
+                } else if (id === selectedTermId) {
+                    btn.className += 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm transform scale-[1.02]';
+                } else {
+                    btn.className += 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-slate-50';
+                }
+            });
+
+            document.querySelectorAll('.def-btn').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                btn.className = 'w-full text-left p-4 rounded-xl border-2 transition-all text-slate-700 focus:outline-none def-btn ';
+                
+                if (matchedPairs.includes(id)) {
+                    btn.className += 'bg-green-100 border-green-500 text-green-800 cursor-default opacity-50';
+                } else if (id === selectedDefId) {
+                    btn.className += 'bg-indigo-50 border-indigo-500 text-indigo-800 shadow-sm transform scale-[1.02]';
+                } else {
+                    btn.className += 'bg-white border-slate-200 hover:border-indigo-300 hover:bg-slate-50';
+                }
+            });
+        }
+
+        function resetVocabGame() {
+            matchedPairs = [];
+            selectedTermId = null;
+            selectedDefId = null;
+            document.getElementById('matchCount').innerText = '0';
+            document.getElementById('vocabSuccess').classList.add('hidden');
+            document.getElementById('vocabSuccess').classList.remove('block');
+            initVocabGame();
+        }
+    </script>
+</body>
+</html>
