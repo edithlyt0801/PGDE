@@ -26,6 +26,13 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Flashcard 3D flip effects */
+        .perspective { perspective: 1000px; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .flip-card-inner { transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800">
@@ -52,6 +59,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                         </svg>
                         Pre-lesson
+                    </button>
+
+                    <!-- Flashcards Tab Button -->
+                    <button id="navFlashcards" onclick="switchTab('flashcards')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        Flashcards
                     </button>
 
                     <!-- Vocab Match Tab Button -->
@@ -82,8 +97,8 @@
         <div id="prelesson" class="tab-content max-w-4xl mx-auto p-4 md:p-8 pt-8 fade-in block">
             <!-- Header -->
             <header class="mb-8 text-center mt-4">
-                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Pre-lesson Task: Understanding Minimum Wage</h1>
-                <p class="text-slate-600 text-lg">Watch the following real-world case study before entering the Simulator.</p>
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Pre-lesson Task: Understanding Price Floors</h1>
+                <p class="text-slate-600 text-lg">Watch the following video to explore the strengths, weaknesses, and alternatives to Price Floors before entering the Vocab match.</p>
             </header>
 
             <!-- Video Embed Section -->
@@ -104,28 +119,28 @@
                 <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">
                     <span class="text-2xl mr-2">🧠</span> Critical Thinking Prompts
                 </h2>
-                <p class="text-slate-700 mb-4 italic">As you watch the video, think about the following questions. We will discuss these in our upcoming debate:</p>
+                <p class="text-slate-700 mb-4 italic">As you watch the video, think about the following questions based on the concepts discussed. We will debate these in class:</p>
                 
                 <ul class="space-y-4 text-slate-700">
                     <li class="flex items-start">
                         <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">1</div>
-                        <div><strong>Stakeholder Perspectives:</strong> Who are the primary beneficiaries of a statutory minimum wage? Who bears the cost?</div>
+                        <div><strong>Weighing Pros and Cons:</strong> The video highlights that price floors provide financial security for producers, but can also lead to wasteful surpluses and inefficiency. In your opinion, do the protections for workers/producers justify the higher prices and potential waste for consumers?</div>
                     </li>
                     <li class="flex items-start">
                         <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">2</div>
-                        <div><strong>Unintended Consequences:</strong> According to economic theories, how might employers react if the minimum wage is set significantly higher than the market equilibrium?</div>
+                        <div><strong>Unintended Market Outcomes:</strong> When a price floor is set too high (like an excessive minimum wage), businesses might not be able to afford as many workers. How does this consequence specifically impact the people the policy was originally trying to help?</div>
                     </li>
                     <li class="flex items-start">
                         <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">3</div>
-                        <div><strong>Real-world Application:</strong> Do you think the current minimum wage in Hong Kong is "effective" (binding) in today's labor market? Why or why not?</div>
+                        <div><strong>Evaluating Alternatives:</strong> The video suggests direct government subsidies and tax incentives as alternatives to a price floor. How do these alternatives achieve the goal of supporting producers and workers without artificially throwing the market equilibrium out of balance?</div>
                     </li>
                 </ul>
             </div>
 
             <!-- Call to Action -->
             <div class="mt-10 flex justify-center">
-                <button onclick="switchTab('vocab')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
-                    Proceed to the Vocab Match
+                <button onclick="switchTab('flashcards')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                    Proceed to Flashcards
                     <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                     </svg>
@@ -133,6 +148,32 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TAB 1.5: FLASHCARDS                        -->
+        <!-- ========================================== -->
+        <div id="flashcards" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Concept Flashcards</h1>
+                <p class="text-slate-600 text-lg">Click on a card to flip it over and review the key concepts from the video.</p>
+            </header>
+
+            <div class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-200">
+                <!-- Flashcard Grid injected via JS -->
+                <div id="flashcardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                </div>
+
+                <!-- Call to Action -->
+                <div class="mt-8 pt-8 border-t border-slate-100 flex justify-center">
+                    <button onclick="switchTab('vocab')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                        Proceed to Vocab Match
+                        <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <!-- ========================================== -->
         <!-- TAB 2: VOCAB MATCH                         -->
@@ -277,16 +318,22 @@
 
             // 取得 DOM 元素
             const prelessonTab = document.getElementById('prelesson');
+            const flashcardsTab = document.getElementById('flashcards');
             const simulatorTab = document.getElementById('simulator');
             const vocabTab = document.getElementById('vocab');
 
             const navPrelesson = document.getElementById('navPrelesson');
+            const navFlashcards = document.getElementById('navFlashcards');
             const navSimulator = document.getElementById('navSimulator');
             const navVocab = document.getElementById('navVocab');
 
             // 隱藏所有分頁
             prelessonTab.classList.add('hidden');
             prelessonTab.classList.remove('block');
+            if (flashcardsTab) {
+                flashcardsTab.classList.add('hidden');
+                flashcardsTab.classList.remove('block');
+            }
             simulatorTab.classList.add('hidden');
             simulatorTab.classList.remove('block');
             vocabTab.classList.add('hidden');
@@ -294,6 +341,7 @@
 
             // 重置導覽列樣式
             navPrelesson.className = inactiveNavClass;
+            if (navFlashcards) navFlashcards.className = inactiveNavClass;
             navSimulator.className = inactiveNavClass;
             navVocab.className = inactiveNavClass;
 
@@ -302,6 +350,10 @@
                 prelessonTab.classList.remove('hidden');
                 prelessonTab.classList.add('block');
                 navPrelesson.className = activeNavClass;
+            } else if (tabId === 'flashcards' && flashcardsTab) {
+                flashcardsTab.classList.remove('hidden');
+                flashcardsTab.classList.add('block');
+                navFlashcards.className = activeNavClass;
             } else if (tabId === 'simulator') {
                 simulatorTab.classList.remove('hidden');
                 simulatorTab.classList.add('block');
@@ -444,9 +496,48 @@
             // 確保一開始顯示 prelesson 分頁
             switchTab('prelesson');
             
-            // 初始化單字配對遊戲
+            // 初始化功能
+            initFlashcards();
             initVocabGame();
         };
+
+        // --- Flashcards Logic ---
+        const flashcardData = [
+            { title: "Price Floor", content: "A government-imposed minimum price set above equilibrium to help producers receive a fair income." },
+            { title: "Common Examples", content: "Minimum wage (labor), agricultural price supports (crops), and minimum prices for goods like milk." },
+            { title: "Key Strengths", content: "Provides financial security, prevents extremely low prices (poor working conditions), and maintains long-term supply." },
+            { title: "Major Weaknesses", content: "Can create market surpluses (excess stock), lead to production inefficiency, and make goods more expensive for consumers." },
+            { title: "Minimum Wage Effects", content: "Ensures workers can support themselves, but may lead to fewer jobs if businesses cannot afford the higher labor cost." },
+            { title: "Policy Alternatives", content: "Direct government subsidies, tax incentives to lower business costs, and education/skill development programs." }
+        ];
+
+        function initFlashcards() {
+            const container = document.getElementById('flashcardContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            flashcardData.forEach((card, index) => {
+                container.innerHTML += `
+                    <div class="h-64 w-full perspective cursor-pointer flip-card group" onclick="this.classList.toggle('flipped')">
+                        <div class="relative w-full h-full flip-card-inner rounded-2xl">
+                            <!-- Front -->
+                            <div class="absolute w-full h-full backface-hidden bg-indigo-50 border-2 border-indigo-100 rounded-2xl flex flex-col items-center justify-center p-6 text-center group-hover:border-indigo-400 group-hover:shadow-md transition-all">
+                                <span class="text-indigo-400 text-sm font-bold tracking-widest uppercase mb-3 bg-white px-3 py-1 rounded-full shadow-sm">Card ${index + 1}</span>
+                                <h3 class="text-2xl font-bold text-indigo-900">${card.title}</h3>
+                                <p class="text-indigo-500/70 mt-6 text-sm font-semibold flex items-center">
+                                    <svg class="w-4 h-4 mr-1 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                                    Tap to flip
+                                </p>
+                            </div>
+                            <!-- Back -->
+                            <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-indigo-700 text-white rounded-2xl flex flex-col items-center justify-center p-6 text-center shadow-lg border-2 border-indigo-800">
+                                <p class="text-lg font-medium leading-relaxed">${card.content}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
         // --- Vocabulary Match Game Logic ---
         const vocabData = [
