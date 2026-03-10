@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EconLab: Price Floor & Minimum Wage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.2; }
+        }
+        .blinking-area {
+            animation: blink 1.5s infinite;
+        }
+        .info-card {
+            transition: all 0.3s ease;
+        }
+        /* 用於平滑淡入分頁內容 */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+
+    <!-- Sticky Navigation Header -->
+    <nav class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Title -->
+                <button onclick="switchTab('prelesson')" class="flex items-center cursor-pointer hover:opacity-80 transition-opacity">
+                    <span class="text-xl font-bold text-indigo-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        EconLab
+                    </span>
+                </button>
+                
+                <!-- Navigation Links -->
+                <div class="flex items-center space-x-6 md:space-x-8">
+                    <!-- Pre-lesson Tab Button -->
+                    <button id="navPrelesson" onclick="switchTab('prelesson')" class="text-indigo-600 font-bold border-b-2 border-indigo-600 py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Pre-lesson
+                    </button>
+                    
+                    <!-- Simulator Tab Button -->
+                    <button id="navSimulator" onclick="switchTab('simulator')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Simulator
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主內容容器 -->
+    <main class="min-h-screen">
+        <!-- ========================================== -->
+        <!-- TAB 1: PRE-LESSON TASK                     -->
+        <!-- ========================================== -->
+        <div id="prelesson" class="tab-content max-w-4xl mx-auto p-4 md:p-8 pt-8 fade-in block">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Pre-lesson Task: Understanding Minimum Wage</h1>
+                <p class="text-slate-600 text-lg">Watch the following real-world case study before entering the Simulator.</p>
+            </header>
+
+            <!-- Video Embed Section -->
+            <div class="bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-slate-200 mb-8">
+                <div class="relative w-full overflow-hidden rounded-xl bg-slate-900 border border-slate-800" style="padding-top: 56.25%;">
+                    <a href="https://www.youtube.com/watch?v=2UDFXf5kZ08" target="_blank" rel="noopener noreferrer" class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-white p-6 text-center hover:bg-slate-800 transition-colors group">
+                        <svg class="w-20 h-20 text-red-600 mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold mb-2">Watch Case Study Video on YouTube</h3>
+                        <p class="text-slate-300 text-sm md:text-base">The video owner has disabled third-party embedding.<br>Click here to open the video safely in a new tab.</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Self-Directed Learning Prompts -->
+            <div class="bg-indigo-50 p-6 md:p-8 rounded-3xl border border-indigo-100 shadow-sm">
+                <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">
+                    <span class="text-2xl mr-2">🧠</span> Critical Thinking Prompts
+                </h2>
+                <p class="text-slate-700 mb-4 italic">As you watch the video, think about the following questions. We will discuss these in our upcoming debate:</p>
+                
+                <ul class="space-y-4 text-slate-700">
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">1</div>
+                        <div><strong>Stakeholder Perspectives:</strong> Who are the primary beneficiaries of a statutory minimum wage? Who bears the cost?</div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">2</div>
+                        <div><strong>Unintended Consequences:</strong> According to economic theories, how might employers react if the minimum wage is set significantly higher than the market equilibrium?</div>
+                    </li>
+                    <li class="flex items-start">
+                        <div class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center shrink-0 mt-0.5 mr-3 font-bold text-sm">3</div>
+                        <div><strong>Real-world Application:</strong> Do you think the current minimum wage in Hong Kong is "effective" (binding) in today's labor market? Why or why not?</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="mt-10 flex justify-center">
+                <button onclick="switchTab('simulator')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                    Proceed to the Simulator
+                    <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: SIMULATOR                           -->
+        <!-- ========================================== -->
+        <div id="simulator" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Price Floor Interactive Simulator</h1>
+                <p class="text-slate-600 text-lg">Topic: Hong Kong Labor Market & Minimum Wage Case Study</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Panel: Controls & Status -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                        <h2 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">1</span>
+                            Policy Settings
+                        </h2>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2 italic">Market Equilibrium Wage (Pe): HK$50</label>
+                            <label for="priceSlider" class="block text-lg font-bold text-indigo-900 mb-2">
+                                Statutory Minimum Wage (Pf): HK$ <span id="priceVal">40</span>
+                            </label>
+                            <input type="range" id="priceSlider" min="10" max="90" value="40" step="1" 
+                                   class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div id="statusBadge" class="py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-slate-100 text-slate-500 border border-slate-200">
+                            Ineffective Price Floor
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 info-card">
+                        <h2 class="text-xl font-semibold mb-4 flex items-center">
+                            <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-2">2</span>
+                            Market Data (Q)
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <span class="text-slate-600">Quantity Demanded (Qd):</span>
+                                <span id="qdVal" class="font-mono font-bold text-blue-600 text-xl">100</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <span class="text-slate-600">Quantity Supplied (Qs):</span>
+                                <span id="qsVal" class="font-mono font-bold text-orange-600 text-xl">100</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span id="gapLabel" class="text-slate-600">Market Status:</span>
+                                <span id="gapVal" class="font-mono font-bold text-red-600 text-xl">Equilibrium</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-lg font-bold mb-2">💡 DSE Exam Tips</h3>
+                        <ul class="text-sm space-y-2 text-indigo-100">
+                            <li>• A price floor is only "effective" when Pf > Pe.</li>
+                            <li>• An effective price floor leads to Qs > Qd.</li>
+                            <li>• In the labor market, this gap is called "unemployment".</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Graph -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-slate-200 relative h-[500px]">
+                        <canvas id="marketChart"></canvas>
+                        <div id="surplusOverlay" class="absolute pointer-events-none hidden" style="background-color: rgba(239, 68, 68, 0.2); border: 2px dashed #ef4444;">
+                            <div class="w-full h-full flex items-center justify-center text-red-600 font-bold text-sm md:text-base blinking-area">
+                                Surplus / Unemployment
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Context Box -->
+                    <div id="contextBox" class="bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm">
+                        <h3 class="font-bold text-slate-800 mb-2">Real-world Connection:</h3>
+                        <p id="contextText" class="text-slate-600 italic">When the wage is set at $40, which is below the market equilibrium of $50, employers will still hire at $50. The statutory minimum wage is not binding.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="mt-8 text-center text-slate-400 text-sm pb-8">
+        © 2025 S4 Economics Teaching Tool | Designed for Logic-based Analysis
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- 標籤頁 (Tabs) 切換邏輯 ---
+        function switchTab(tabId) {
+            // 定義樣式
+            const activeNavClass = "text-indigo-600 font-bold border-b-2 border-indigo-600 py-5 flex items-center transition-colors";
+            const inactiveNavClass = "text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors";
+
+            // 取得 DOM 元素
+            const prelessonTab = document.getElementById('prelesson');
+            const simulatorTab = document.getElementById('simulator');
+            const navPrelesson = document.getElementById('navPrelesson');
+            const navSimulator = document.getElementById('navSimulator');
+
+            // 隱藏所有分頁
+            prelessonTab.classList.add('hidden');
+            prelessonTab.classList.remove('block');
+            simulatorTab.classList.add('hidden');
+            simulatorTab.classList.remove('block');
+
+            // 重置導覽列樣式
+            navPrelesson.className = inactiveNavClass;
+            navSimulator.className = inactiveNavClass;
+
+            // 顯示目標分頁並套用樣式
+            if (tabId === 'prelesson') {
+                prelessonTab.classList.remove('hidden');
+                prelessonTab.classList.add('block');
+                navPrelesson.className = activeNavClass;
+            } else if (tabId === 'simulator') {
+                simulatorTab.classList.remove('hidden');
+                simulatorTab.classList.add('block');
+                navSimulator.className = activeNavClass;
+                
+                // 【關鍵修復】: 當 Canvas 從隱藏(display:none)變為顯示時，必須強制重新計算大小
+                // 否則圖表可能會消失或尺寸異常縮小
+                if (marketChart) {
+                    marketChart.resize();
+                    updateChart();
+                }
+            }
+            
+            // 切換分頁後自動捲動回頁面最頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- Simulator Logic ---
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        const slider = document.getElementById('priceSlider');
+        const priceDisplay = document.getElementById('priceVal');
+        const qdDisplay = document.getElementById('qdVal');
+        const qsDisplay = document.getElementById('qsVal');
+        const gapValDisplay = document.getElementById('gapVal');
+        const gapLabelDisplay = document.getElementById('gapLabel');
+        const statusBadge = document.getElementById('statusBadge');
+        const contextText = document.getElementById('contextText');
+        const contextBox = document.getElementById('contextBox');
+        const surplusOverlay = document.getElementById('surplusOverlay');
+
+        // Initial Data
+        const Pe = 50;
+        const Qe = 100;
+        
+        let marketChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Demand Curve (D)',
+                        data: [{x: 50, y: 100}, {x: 150, y: 0}], 
+                        borderColor: '#2563eb',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Supply Curve (S)',
+                        data: [{x: 50, y: 0}, {x: 150, y: 100}], 
+                        borderColor: '#f97316',
+                        borderWidth: 3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Price Floor (Pf)',
+                        data: [{x: 0, y: 40}, {x: 200, y: 40}],
+                        borderColor: '#4f46e5',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { type: 'linear', title: { display: true, text: 'Quantity (Labor Units)' }, min: 0, max: 200 },
+                    y: { title: { display: true, text: 'Price (HK$)' }, min: 0, max: 120 }
+                },
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        function updateChart() {
+            if(!slider) return;
+            const Pf = parseInt(slider.value);
+            priceDisplay.innerText = Pf;
+
+            const Qd = Math.max(0, 150 - Pf);
+            const Qs = Math.max(0, Pf + 50);
+
+            marketChart.data.datasets[2].data = [{x: 0, y: Pf}, {x: 200, y: Pf}];
+
+            if (Pf > Pe) {
+                // Effective
+                statusBadge.innerText = "Effective Price Floor";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-red-100 text-red-700 border border-red-200";
+                qdDisplay.innerText = Qd;
+                qsDisplay.innerText = Qs;
+                gapLabelDisplay.innerText = "Unemployed:";
+                gapValDisplay.innerText = Qs - Qd;
+                contextText.innerText = `⚠️ Real-world Case: Since the statutory wage $${Pf} is higher than the equilibrium $50, employers reduce hiring to ${Qd} people due to increased costs. However, more people (${Qs}) are willing to work, leading to a market surplus, i.e., "unemployment".`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-red-500 shadow-sm";
+                
+                const chartArea = marketChart.chartArea;
+                if(chartArea) {
+                    const xQd = marketChart.scales.x.getPixelForValue(Qd);
+                    const xQs = marketChart.scales.x.getPixelForValue(Qs);
+                    const yPf = marketChart.scales.y.getPixelForValue(Pf);
+                    
+                    surplusOverlay.style.display = 'block';
+                    surplusOverlay.style.left = xQd + 'px';
+                    surplusOverlay.style.top = (yPf - 20) + 'px';
+                    surplusOverlay.style.width = (xQs - xQd) + 'px';
+                    surplusOverlay.style.height = '40px';
+                }
+            } else {
+                // Ineffective
+                statusBadge.innerText = "Ineffective Price Floor";
+                statusBadge.className = "py-3 px-4 rounded-xl text-center font-bold text-lg mb-4 bg-slate-100 text-slate-500 border border-slate-200";
+                qdDisplay.innerText = Qe;
+                qsDisplay.innerText = Qe;
+                gapLabelDisplay.innerText = "Market Status:";
+                gapValDisplay.innerText = "Equilibrium (Traded at $50)";
+                contextText.innerText = `✅ Real-world Case: Although the government mandates a wage no lower than $${Pf}, the market is already willing to pay $50. Wages will remain at $50, having no real impact on employment.`;
+                contextBox.className = "bg-white p-6 rounded-2xl border-l-4 border-slate-300 shadow-sm";
+                surplusOverlay.style.display = 'none';
+            }
+
+            marketChart.update();
+        }
+
+        if (slider) {
+            slider.addEventListener('input', updateChart);
+        }
+        
+        window.onload = () => {
+            marketChart.data.datasets[0].data = [];
+            marketChart.data.datasets[1].data = [];
+            for(let p=0; p<=150; p+=10) {
+                marketChart.data.datasets[0].data.push({y: p, x: 150-p});
+                marketChart.data.datasets[1].data.push({y: p, x: p+50});
+            }
+            updateChart();
+            
+            // 確保一開始顯示 prelesson 分頁
+            switchTab('prelesson');
+        };
+    </script>
+</body>
+</html>
