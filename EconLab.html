@@ -53,6 +53,14 @@
                         </svg>
                         Pre-lesson
                     </button>
+
+                    <!-- Vocab Match Tab Button -->
+                    <button id="navVocab" onclick="switchTab('vocab')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Vocab Match
+                    </button>
                     
                     <!-- Simulator Tab Button -->
                     <button id="navSimulator" onclick="switchTab('simulator')" class="text-slate-500 hover:text-indigo-600 font-medium py-5 flex items-center transition-colors">
@@ -116,8 +124,8 @@
 
             <!-- Call to Action -->
             <div class="mt-10 flex justify-center">
-                <button onclick="switchTab('simulator')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
-                    Proceed to the Simulator
+                <button onclick="switchTab('vocab')" class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full transition duration-300 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-indigo-300 text-lg">
+                    Proceed to the Vocab Match
                     <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                     </svg>
@@ -127,7 +135,49 @@
 
 
         <!-- ========================================== -->
-        <!-- TAB 2: SIMULATOR                           -->
+        <!-- TAB 2: VOCAB MATCH                         -->
+        <!-- ========================================== -->
+        <div id="vocab" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
+            <!-- Header -->
+            <header class="mb-8 text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-900 mb-2">Vocabulary Match Practice</h1>
+                <p class="text-slate-600 text-lg">Select a term on the left, then select its correct definition on the right.</p>
+            </header>
+
+            <div class="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-lg font-bold text-slate-700">Matches Found: <span id="matchCount" class="text-indigo-600">0</span> / 6</div>
+                    <button onclick="resetVocabGame()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-colors text-sm">Reset Game</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="vocabGameArea">
+                    <!-- Terms Column -->
+                    <div class="space-y-3" id="termsContainer">
+                        <!-- Terms injected via JS -->
+                    </div>
+                    
+                    <!-- Definitions Column -->
+                    <div class="space-y-3" id="defsContainer">
+                        <!-- Definitions injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div id="vocabSuccess" class="hidden mt-8 p-6 bg-green-50 border border-green-200 rounded-2xl text-center fade-in">
+                    <h3 class="text-2xl font-bold text-green-700 mb-2">🎉 Excellent Job!</h3>
+                    <p class="text-green-600 mb-6">You've successfully mastered the key terms for Price Floors.</p>
+                    <button onclick="switchTab('simulator')" class="inline-flex items-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full transition duration-300 shadow-sm focus:ring-4 focus:ring-green-300">
+                        Proceed to the Simulator
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: SIMULATOR                           -->
         <!-- ========================================== -->
         <div id="simulator" class="tab-content max-w-6xl mx-auto p-4 md:p-8 pt-8 fade-in hidden">
             <!-- Header -->
@@ -228,18 +278,24 @@
             // 取得 DOM 元素
             const prelessonTab = document.getElementById('prelesson');
             const simulatorTab = document.getElementById('simulator');
+            const vocabTab = document.getElementById('vocab');
+
             const navPrelesson = document.getElementById('navPrelesson');
             const navSimulator = document.getElementById('navSimulator');
+            const navVocab = document.getElementById('navVocab');
 
             // 隱藏所有分頁
             prelessonTab.classList.add('hidden');
             prelessonTab.classList.remove('block');
             simulatorTab.classList.add('hidden');
             simulatorTab.classList.remove('block');
+            vocabTab.classList.add('hidden');
+            vocabTab.classList.remove('block');
 
             // 重置導覽列樣式
             navPrelesson.className = inactiveNavClass;
             navSimulator.className = inactiveNavClass;
+            navVocab.className = inactiveNavClass;
 
             // 顯示目標分頁並套用樣式
             if (tabId === 'prelesson') {
@@ -252,11 +308,14 @@
                 navSimulator.className = activeNavClass;
                 
                 // 【關鍵修復】: 當 Canvas 從隱藏(display:none)變為顯示時，必須強制重新計算大小
-                // 否則圖表可能會消失或尺寸異常縮小
                 if (marketChart) {
                     marketChart.resize();
                     updateChart();
                 }
+            } else if (tabId === 'vocab') {
+                vocabTab.classList.remove('hidden');
+                vocabTab.classList.add('block');
+                navVocab.className = activeNavClass;
             }
             
             // 切換分頁後自動捲動回頁面最頂部
@@ -384,7 +443,142 @@
             
             // 確保一開始顯示 prelesson 分頁
             switchTab('prelesson');
+            
+            // 初始化單字配對遊戲
+            initVocabGame();
         };
+
+        // --- Vocabulary Match Game Logic ---
+        const vocabData = [
+            { id: 1, term: "Price Floor", def: "The lower limit imposed by the government on the price that sellers can charge." },
+            { id: 2, term: "Effective Price Floor", def: "A price limit set above the equilibrium price, leading to a market surplus." },
+            { id: 3, term: "Ineffective Price Floor", def: "A price limit set below the equilibrium price, having no impact on the actual transaction price." },
+            { id: 4, term: "Unemployment", def: "A surplus of labor caused when the minimum wage is higher than the equilibrium wage." },
+            { id: 5, term: "Black Market", def: "An illegal market where transactions occur at a price usually lower than the government-mandated minimum." },
+            { id: 6, term: "Non-price Competition", def: "Sellers offering non-monetary benefits (e.g., free gifts) to clear excess supply." }
+        ];
+
+        let selectedTermId = null;
+        let selectedDefId = null;
+        let matchedPairs = [];
+
+        function initVocabGame() {
+            const termsContainer = document.getElementById('termsContainer');
+            const defsContainer = document.getElementById('defsContainer');
+            
+            termsContainer.innerHTML = '';
+            defsContainer.innerHTML = '';
+            
+            // Shuffle definitions
+            const shuffledDefs = [...vocabData].sort(() => Math.random() - 0.5);
+
+            // Render Terms
+            vocabData.forEach(item => {
+                const termEl = document.createElement('button');
+                termEl.className = `w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-lg focus:outline-none term-btn`;
+                termEl.dataset.id = item.id;
+                termEl.innerText = item.term;
+                termEl.onclick = () => handleTermSelect(item.id);
+                termsContainer.appendChild(termEl);
+            });
+
+            // Render Definitions
+            shuffledDefs.forEach(item => {
+                const defEl = document.createElement('button');
+                defEl.className = `w-full text-left p-4 rounded-xl border-2 transition-all text-slate-700 focus:outline-none def-btn`;
+                defEl.dataset.id = item.id;
+                defEl.innerText = item.def;
+                defEl.onclick = () => handleDefSelect(item.id);
+                defsContainer.appendChild(defEl);
+            });
+
+            updateVocabUI();
+        }
+
+        function handleTermSelect(id) {
+            if (matchedPairs.includes(id)) return;
+            selectedTermId = selectedTermId === id ? null : id; // Toggle
+            updateVocabUI();
+            checkMatch();
+        }
+
+        function handleDefSelect(id) {
+            if (matchedPairs.includes(id)) return;
+            selectedDefId = selectedDefId === id ? null : id; // Toggle
+            updateVocabUI();
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (selectedTermId !== null && selectedDefId !== null) {
+                if (selectedTermId === selectedDefId) {
+                    // Match Correct
+                    matchedPairs.push(selectedTermId);
+                    document.getElementById('matchCount').innerText = matchedPairs.length;
+                    selectedTermId = null;
+                    selectedDefId = null;
+                    updateVocabUI();
+                    
+                    if (matchedPairs.length === vocabData.length) {
+                        document.getElementById('vocabSuccess').classList.remove('hidden');
+                        document.getElementById('vocabSuccess').classList.add('block');
+                    }
+                } else {
+                    // Match Incorrect
+                    const currentTermBtn = document.querySelector(`.term-btn[data-id="${selectedTermId}"]`);
+                    const currentDefBtn = document.querySelector(`.def-btn[data-id="${selectedDefId}"]`);
+                    
+                    currentTermBtn.classList.replace('border-indigo-500', 'border-red-500');
+                    currentTermBtn.classList.replace('bg-indigo-50', 'bg-red-50');
+                    currentDefBtn.classList.replace('border-indigo-500', 'border-red-500');
+                    currentDefBtn.classList.replace('bg-indigo-50', 'bg-red-50');
+
+                    setTimeout(() => {
+                        selectedTermId = null;
+                        selectedDefId = null;
+                        updateVocabUI();
+                    }, 600);
+                }
+            }
+        }
+
+        function updateVocabUI() {
+            document.querySelectorAll('.term-btn').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                btn.className = 'w-full text-left p-4 rounded-xl border-2 transition-all font-bold text-lg focus:outline-none term-btn ';
+                
+                if (matchedPairs.includes(id)) {
+                    btn.className += 'bg-green-100 border-green-500 text-green-700 cursor-default opacity-50';
+                } else if (id === selectedTermId) {
+                    btn.className += 'bg-indigo-50 border-indigo-500 text-indigo-700 shadow-sm transform scale-[1.02]';
+                } else {
+                    btn.className += 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-slate-50';
+                }
+            });
+
+            document.querySelectorAll('.def-btn').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                btn.className = 'w-full text-left p-4 rounded-xl border-2 transition-all text-slate-700 focus:outline-none def-btn ';
+                
+                if (matchedPairs.includes(id)) {
+                    btn.className += 'bg-green-100 border-green-500 text-green-800 cursor-default opacity-50';
+                } else if (id === selectedDefId) {
+                    btn.className += 'bg-indigo-50 border-indigo-500 text-indigo-800 shadow-sm transform scale-[1.02]';
+                } else {
+                    btn.className += 'bg-white border-slate-200 hover:border-indigo-300 hover:bg-slate-50';
+                }
+            });
+        }
+
+        function resetVocabGame() {
+            matchedPairs = [];
+            selectedTermId = null;
+            selectedDefId = null;
+            document.getElementById('matchCount').innerText = '0';
+            document.getElementById('vocabSuccess').classList.add('hidden');
+            document.getElementById('vocabSuccess').classList.remove('block');
+            initVocabGame();
+        }
     </script>
 </body>
 </html>
